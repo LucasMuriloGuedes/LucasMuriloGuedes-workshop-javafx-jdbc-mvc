@@ -41,7 +41,7 @@ public class MainViewController implements Initializable {
     }
     
     public void onMenuitemDepartamentAction(){
-        
+        loadView("/gui/DepartamentList.fxml");
         
     }
     
