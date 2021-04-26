@@ -41,6 +41,10 @@ public class Main extends Application {
         }
         
     }
+    
+    public static Scene getMaiScene(){
+        return mainScene;
+    }
 
 
     public static void main(String[] args) {
