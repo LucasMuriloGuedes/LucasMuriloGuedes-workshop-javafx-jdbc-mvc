@@ -1,15 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gui;
 
 import DB.DbException;
+import gui.listener.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Contraints;
 import gui.util.Utils;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,16 +21,14 @@ import javax.swing.SpringLayout;
 import model.entities.Department;
 import model.services.DepartmentService;
 
-/**
- * FXML Controller class
- *
- * @author Lucas Murilo
- */
+
 public class DepartmentFormController implements Initializable {
     
     private Department entity;
     
     private DepartmentService service;
+    
+    private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
     
 
     @FXML
@@ -60,6 +57,7 @@ public class DepartmentFormController implements Initializable {
         try{
             entity = getFormData();
             service.saveOrUpdate(entity);
+            NotifyDataChangeListeners();
             Utils.currentStage(event).close();
         }
         catch(DbException e){
@@ -70,15 +68,15 @@ public class DepartmentFormController implements Initializable {
     @FXML
     public void onBtnCancelAction(ActionEvent event){
         
-        Utils.currentStage(event).close();
-        
-        
+        Utils.currentStage(event).close();      
+    }
+    
+    public void subscribeDataChangeListener(DataChangeListener listener){
+        dataChangeListeners.add(listener);
     }
     
     public void setDepartmentService(DepartmentService service){
-        this.service = service;
-        
-        
+        this.service = service;  
     }
     
     public void setDepartament(Department entity){
@@ -112,5 +110,11 @@ public class DepartmentFormController implements Initializable {
         obj.setId(Utils.tryParseToInt(txtId.getText()));
         obj.setName(txtName.getText());
         return obj;
+    }
+
+    private void NotifyDataChangeListeners() {
+        for(DataChangeListener listener: dataChangeListeners){
+            listener.onDataChanged();
+        }
     }
 }
